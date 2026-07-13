@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.1](https://github.com/stoatchat/for-desktop/compare/v1.4.0...v1.4.1) (2026-07-13)
+
+
+### Bug Fixes
+
+* Do not enable autostart on first launch ([#237](https://github.com/stoatchat/for-desktop/issues/237)) ([e00f3a8](https://github.com/stoatchat/for-desktop/commit/e00f3a860c566ea1e8287573144c2e081d243664))
+
 ## [1.4.0](https://github.com/stoatchat/for-desktop/compare/v1.3.0...v1.4.0) (2026-06-16)
 
 
