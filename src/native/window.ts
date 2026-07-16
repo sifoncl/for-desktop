@@ -203,7 +203,11 @@ export function createMainWindow() {
   session.defaultSession.setDisplayMediaRequestHandler(
     (request, callback) => {
       desktopCapturer
-        .getSources({ types: ["screen", "window"], fetchWindowIcons: true })
+        .getSources({
+          types: ["screen", "window"],
+          fetchWindowIcons: true,
+          thumbnailSize: { width: 480, height: 270 },
+        })
         .then((sources) => {
           // Shortcut for linux wayland.
           if (sources.length == 1) {
@@ -231,19 +235,14 @@ export function createMainWindow() {
           mainWindow.webContents.send(
             "screenPicker",
             sources.map((source, idx) => {
-              const image = source.appIcon;
-              if (image) {
-                if (image.getAspectRatio() > 1) {
-                  image.resize({ width: 256 });
-                } else {
-                  image.resize({ height: 256 });
-                }
-              }
+              const preview = source.thumbnail.isEmpty()
+                ? source.appIcon
+                : source.thumbnail;
               return {
                 idx: idx,
                 name: source.name,
                 isFullScreen: source.id.startsWith("screen"),
-                image: image?.toDataURL(),
+                image: preview?.toDataURL(),
               };
             }),
           );
