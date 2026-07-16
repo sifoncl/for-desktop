@@ -10,6 +10,10 @@ import { selectServerOnFirstLaunch } from "./native/serverSelection";
 import { initTray } from "./native/tray";
 import { createMainWindow, getBuildUrl, mainWindow } from "./native/window";
 
+// Joining a voice call is already an explicit user action. Allow newly
+// published remote audio, including screen-share audio, to begin immediately.
+app.commandLine.appendSwitch("autoplay-policy", "no-user-gesture-required");
+
 // Squirrel-specific logic
 // create/remove shortcuts on Windows when installing / uninstalling
 // we just need to close out of the app immediately
