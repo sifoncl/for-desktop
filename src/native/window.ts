@@ -19,12 +19,19 @@ import { updateTrayMenu } from "./tray";
 // global reference to main window
 export let mainWindow: BrowserWindow;
 
-// currently in-use build
-export const BUILD_URL = new URL(
-  app.commandLine.hasSwitch("force-server")
-    ? app.commandLine.getSwitchValue("force-server")
-    : /*MAIN_WINDOW_VITE_DEV_SERVER_URL ??*/ "https://stoat.chat/app",
-);
+export const DEFAULT_BUILD_URL = "https://stoat.chat/app";
+
+/**
+ * Resolve the currently configured web client. The command line switch stays
+ * available for development and always takes precedence over persisted state.
+ */
+export function getBuildUrl() {
+  return new URL(
+    app.commandLine.hasSwitch("force-server")
+      ? app.commandLine.getSwitchValue("force-server")
+      : config.serverUrl || DEFAULT_BUILD_URL,
+  );
+}
 
 // internal window state
 let shouldQuit = false;
@@ -89,7 +96,7 @@ export function createMainWindow() {
   }
 
   // load the entrypoint
-  mainWindow.loadURL(BUILD_URL.toString());
+  mainWindow.loadURL(getBuildUrl().toString());
 
   // minimise window to tray
   mainWindow.on("close", (event) => {

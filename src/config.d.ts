@@ -1,5 +1,8 @@
 declare type DesktopConfig = {
   firstLaunch: boolean;
+  serverSelectionShown: boolean;
+  serverSelectionVersion: number;
+  serverUrl: string;
   customFrame: boolean;
   minimiseToTray: boolean;
   spellchecker: boolean;

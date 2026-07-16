@@ -13,6 +13,11 @@ Application for Windows, macOS, and Linux.
 </div>
 <br/>
 
+On first launch, the desktop app asks for a web client URL. Leave it empty to
+use the official `https://stoat.chat/app` client. The current Stoat web client
+provides browser noise suppression and enhanced RNNoise processing under its
+voice settings.
+
 ## Installation
 
 <a href="https://repology.org/project/stoat-desktop/versions">

@@ -6,8 +6,9 @@ import started from "electron-squirrel-startup";
 import { autoLaunch } from "./native/autoLaunch";
 import { config } from "./native/config";
 import { initDiscordRpc } from "./native/discordRpc";
+import { selectServerOnFirstLaunch } from "./native/serverSelection";
 import { initTray } from "./native/tray";
-import { BUILD_URL, createMainWindow, mainWindow } from "./native/window";
+import { createMainWindow, getBuildUrl, mainWindow } from "./native/window";
 
 // Squirrel-specific logic
 // create/remove shortcuts on Windows when installing / uninstalling
@@ -35,18 +36,20 @@ const onNotifyUser = (_info: IUpdateInfo) => {
 };
 
 if (acquiredLock) {
-  // start auto update logic
-  updateElectronApp({ onNotifyUser });
-
   // create and configure the app when electron is ready
-  app.on("ready", () => {
+  app.on("ready", async () => {
+    const serverSelected = await selectServerOnFirstLaunch();
+
+    if (!serverSelected) return;
+
     // create window and application contexts
     createMainWindow();
 
+    // Start updates only after the first-launch choice is safely persisted.
+    updateElectronApp({ onNotifyUser });
+
     // save first launch state
     if (config.firstLaunch) {
-      // Doesn't do anything right now. Used to enable auto start, but that behaviour was removed.
-      // Left in case it gets used in the future.
       config.firstLaunch = false;
     }
 
@@ -88,7 +91,7 @@ if (acquiredLock) {
   app.on("web-contents-created", (_, contents) => {
     // prevent navigation out of build URL origin
     contents.on("will-navigate", (event, navigationUrl) => {
-      if (new URL(navigationUrl).origin !== BUILD_URL.origin) {
+      if (new URL(navigationUrl).origin !== getBuildUrl().origin) {
         event.preventDefault();
       }
     });

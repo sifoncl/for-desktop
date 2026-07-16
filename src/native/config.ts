@@ -10,6 +10,15 @@ const schema = {
   firstLaunch: {
     type: "boolean",
   } as JSONSchema.Boolean,
+  serverSelectionShown: {
+    type: "boolean",
+  } as JSONSchema.Boolean,
+  serverSelectionVersion: {
+    type: "number",
+  } as JSONSchema.Number,
+  serverUrl: {
+    type: "string",
+  } as JSONSchema.String,
   customFrame: {
     type: "boolean",
   } as JSONSchema.Boolean,
@@ -54,6 +63,9 @@ const store = new Store({
   schema,
   defaults: {
     firstLaunch: true,
+    serverSelectionShown: false,
+    serverSelectionVersion: 0,
+    serverUrl: "",
     customFrame: true,
     minimiseToTray: true,
     startMinimisedToTray: false,
@@ -75,8 +87,15 @@ const store = new Store({
  */
 class Config {
   sync() {
+    // Some settings are written by the first-launch flow before the main
+    // application window exists.
+    if (!mainWindow || mainWindow.isDestroyed()) return;
+
     mainWindow.webContents.send("config", {
       firstLaunch: this.firstLaunch,
+      serverSelectionShown: this.serverSelectionShown,
+      serverSelectionVersion: this.serverSelectionVersion,
+      serverUrl: this.serverUrl,
       customFrame: this.customFrame,
       minimiseToTray: this.minimiseToTray,
       startMinimisedToTray: this.startMinimisedToTray,
@@ -94,6 +113,49 @@ class Config {
   set firstLaunch(value: boolean) {
     (store as never as { set(k: string, value: boolean): void }).set(
       "firstLaunch",
+      value,
+    );
+
+    this.sync();
+  }
+
+  get serverSelectionShown() {
+    return (store as never as { get(k: string): boolean }).get(
+      "serverSelectionShown",
+    );
+  }
+
+  set serverSelectionShown(value: boolean) {
+    (store as never as { set(k: string, value: boolean): void }).set(
+      "serverSelectionShown",
+      value,
+    );
+
+    this.sync();
+  }
+
+  get serverSelectionVersion() {
+    return (store as never as { get(k: string): number }).get(
+      "serverSelectionVersion",
+    );
+  }
+
+  set serverSelectionVersion(value: number) {
+    (store as never as { set(k: string, value: number): void }).set(
+      "serverSelectionVersion",
+      value,
+    );
+
+    this.sync();
+  }
+
+  get serverUrl() {
+    return (store as never as { get(k: string): string }).get("serverUrl");
+  }
+
+  set serverUrl(value: string) {
+    (store as never as { set(k: string, value: string): void }).set(
+      "serverUrl",
       value,
     );
 
