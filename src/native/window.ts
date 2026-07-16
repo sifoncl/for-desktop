@@ -235,14 +235,14 @@ export function createMainWindow() {
           mainWindow.webContents.send(
             "screenPicker",
             sources.map((source, idx) => {
-              const preview = source.thumbnail.isEmpty()
-                ? source.appIcon
-                : source.thumbnail;
               return {
                 idx: idx,
                 name: source.name,
                 isFullScreen: source.id.startsWith("screen"),
-                image: preview?.toDataURL(),
+                image: source.appIcon?.toDataURL(),
+                preview: source.thumbnail.isEmpty()
+                  ? undefined
+                  : source.thumbnail.toDataURL(),
               };
             }),
           );

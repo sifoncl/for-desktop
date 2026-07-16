@@ -23,6 +23,7 @@ contextBridge.exposeInMainWorld("native", {
         name: string;
         isFullScreen: boolean;
         image?: string;
+        preview?: string;
       }[],
     ) => void,
   ) => {
